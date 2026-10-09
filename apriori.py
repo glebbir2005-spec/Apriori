@@ -1,4 +1,5 @@
 from collections import defaultdict
+import itertools
 
 
 def apriori(transactions, min_support_pct):
@@ -28,9 +29,13 @@ def apriori(transactions, min_support_pct):
             break
             
         candidate_counts = defaultdict(int)
-        for t in transaction_sets:
-            for c in candidates:
-                if c.issubset(t):
+        
+        valid_transactions = [t for t in transaction_sets if len(t) >= k]
+        
+        for t in valid_transactions:
+            for comb in itertools.combinations(t, k):
+                c = frozenset(comb)
+                if c in candidates:
                     candidate_counts[c] += 1
                     
         current_L = {c: count for c, count in candidate_counts.items() if count >= min_supp_count}
